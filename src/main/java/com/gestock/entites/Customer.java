@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -42,6 +43,7 @@ public class Customer {
 
     @NotNull
     @NotEmpty
+    @Size(max = 10)
     @Column(unique = true)
     private String phoneNumber;
 
@@ -53,8 +55,9 @@ public class Customer {
 
     @NotNull
     @NotEmpty
-    private Genre sexe;
-
+//    @Enumerated(value = EnumType.STRING)
+//    private Genre sexe;
+    private String sexe;
 
     @NotNull
     @Column(name = "created_at")
