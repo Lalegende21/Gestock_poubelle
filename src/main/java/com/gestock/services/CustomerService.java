@@ -1,27 +1,36 @@
 package com.gestock.services;
 
 import com.gestock.entites.Customer;
+import com.gestock.enums.Genre;
 import com.gestock.repositories.CustomerRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
-@NoArgsConstructor
 public class CustomerService {
 
     private CustomerRepository customerRepository;
 
 
-    public void createCustomer(){}
+    public void createCustomer(Customer customer){
+        this.customerRepository.save(customer);
+    }
 
-    public void getAllCustomer() {}
+    public List<Customer> getAllCustomer() {
+        return this.customerRepository.findAll();
+    }
 
-    public void getCustomerById(Long id) {}
+    public Customer getCustomerById(Long id) {
+        Optional<Customer> optionalCustomer = this.customerRepository.findById(id);
+        return optionalCustomer.orElseThrow(() -> new EntityNotFoundException("Aucun client avec cet identifiant trouve !"));
+    }
 
     public void getCustomerByEmail(Long id) {}
 
