@@ -1,7 +1,5 @@
 package com.gestock.entites;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.gestock.enums.Genre;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
@@ -14,9 +12,7 @@ import lombok.Setter;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.annotation.processing.Generated;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Entity
 @Getter

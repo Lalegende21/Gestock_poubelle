@@ -1,12 +1,9 @@
 package com.gestock.services;
 
 import com.gestock.entites.Customer;
-import com.gestock.enums.Genre;
 import com.gestock.repositories.CustomerRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
