@@ -1,5 +1,9 @@
 package com.gestock.controlleurs;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gestock.dto.Message;
+import com.gestock.dto.ProductDto;
 import com.gestock.entites.Image;
 import com.gestock.entites.Product;
 import com.gestock.responses.ProductResponseRequest;
@@ -7,6 +11,7 @@ import com.gestock.services.ImageService;
 import com.gestock.services.ProductService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -14,54 +19,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
-@AllArgsConstructor
-@RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping("/product")
 public class ProductController {
 
-    private ProductService productService;
+    private final ProductService productService;
 
-    private ImageService imageService;
-
-
-    @PostMapping(path = "/save")
-    public ResponseEntity<?> createProduct(
-            @RequestParam("name") String name,
-            @RequestParam("description") String description,
-            @RequestParam("price") String price,
-            @RequestParam("image")MultipartFile file
-            ) {
-        try {
-            if (file.isEmpty()) {
-                Product product = Product.builder()
-                        .name(name)
-                        .description(description)
-                        .price(price)
-                        .build();
-
-                Product productToSave = this.productService.saveProduct(product);
-                return ResponseEntity.status(HttpStatus.CREATED).body(productToSave);
-            } else {
-                Image image = this.imageService.uploadImageToFolder(file);
-
-                Product product = Product.builder()
-                        .name(name)
-                        .description(description)
-                        .price(price)
-                        .image(image.getFilepath())
-                        .build();
-                Product productToSave = this.productService.saveProduct(product);
-                return ResponseEntity.status(HttpStatus.CREATED).body(productToSave);
-            }
-
-        }catch (Exception e) {
-            System.out.println(e);
-            ProductResponseRequest productResponseRequest = new ProductResponseRequest(e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(productResponseRequest);
-        }
+    public ProductController(ProductService productService) {
+        this.productService = productService;
     }
+
 
     @GetMapping(path = "/get-all-products")
     public ResponseEntity<Page<Product>> getProductPaginated(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "3") int size) {
@@ -69,9 +39,39 @@ public class ProductController {
         return new ResponseEntity<>(products, HttpStatus.OK);
     }
 
-    @GetMapping(path = "/get-all", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<Product>> getALlProduct() {
-        List<Product> products = this.productService.getAllProducts();
-        return ResponseEntity.status(HttpStatus.OK).body(products);
+
+
+    @PostMapping("/save")
+    public ResponseEntity<?> addStudentHandler(@RequestPart MultipartFile file,
+                                               @RequestPart String productDto
+    ) throws IOException {
+
+        ProductDto dto = convertToProductDtoj(productDto);
+
+        productService.saveProduct(dto, file);
+        return  new ResponseEntity<>( new Message("Le product a ete ajoutee avec success"), HttpStatus.CREATED);
     }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<ProductDto>> getAllProductHandler() {
+        return  ResponseEntity.ok(productService.getAllProducts());
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public  ResponseEntity<String> deleteProductHandler(@PathVariable Long id) throws IOException {
+        productService.deleteProduct(id);
+        return  ResponseEntity.ok(null);
+    }
+
+
+    private ProductDto convertToProductDtoj(String productDtoObj) throws JsonProcessingException {
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.readValue(productDtoObj, ProductDto.class);
+
+
+    }
+
+
+
 }

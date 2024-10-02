@@ -37,9 +37,6 @@ public class Product {
     @NotBlank
     private String price;
 
-    private String image;
+    private String poster;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "product")
-    private List<Image> images;
 }
