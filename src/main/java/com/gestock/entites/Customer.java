@@ -1,14 +1,12 @@
 package com.gestock.entites;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -17,6 +15,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class Customer {
@@ -65,7 +64,7 @@ public class Customer {
         this.created_at = LocalDateTime.now();
     }
 
-//    @JsonIgnore
+    @JsonIgnore
     @Column(name = "update_at")
     @DateTimeFormat(pattern = "yyyy-MM-dd/HH-mm-ss")
     @UpdateTimestamp
